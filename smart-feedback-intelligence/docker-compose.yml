@@ -1,0 +1,69 @@
+version: "3.9"
+
+services:
+
+  # ── FastAPI Backend ───────────────────────────────────
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: feedback-api
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./saved_models:/app/saved_models   # persist trained models
+      - ./mlruns:/app/mlruns               # persist MLflow runs
+    environment:
+      - MLFLOW_TRACKING_URI=/app/mlruns
+      - API_HOST=0.0.0.0
+      - API_PORT=8000
+      - SECRET_KEY=${SECRET_KEY:-changeme-in-production}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      start_period: 60s
+      retries: 3
+    restart: unless-stopped
+    networks:
+      - feedback-net
+
+  # ── React Frontend (nginx) ────────────────────────────
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+      args:
+        - VITE_API_URL=http://localhost:8000
+    container_name: feedback-ui
+    ports:
+      - "80:80"
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - feedback-net
+
+  # ── MLflow Tracking Server ────────────────────────────
+  mlflow:
+    image: python:3.11-slim
+    container_name: feedback-mlflow
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./mlruns:/mlruns
+    command: >
+      bash -c "pip install mlflow -q &&
+               mlflow server
+               --host 0.0.0.0
+               --port 5000
+               --backend-store-uri /mlruns
+               --default-artifact-root /mlruns"
+    restart: unless-stopped
+    networks:
+      - feedback-net
+
+networks:
+  feedback-net:
+    driver: bridge

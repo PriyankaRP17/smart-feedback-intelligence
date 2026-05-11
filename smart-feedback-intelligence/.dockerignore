@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.Python
+*.egg-info/
+
+# Virtual environment
+venv/
+env/
+.venv/
+
+# Development
+.env
+.git/
+.github/
+*.md
+tests/
+notebooks/
+
+# Node
+frontend/node_modules/
+frontend/.npm/
+
+# Large data files — models mounted as volume
+data/raw/
+data/processed/
+*.parquet
+*.csv
+
+# MLflow runs — mounted as volume  
+mlruns/
+
+# IDE
+.vscode/
+.idea/
