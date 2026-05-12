@@ -28,8 +28,9 @@ services:
         value: "0.0.0.0"
 
   # ── 2. React Frontend (Static Site) ────────────────────
-  - type: static
+  - type: web
     name: feedback-intelligence-ui
+    runtime: static
     plan: free
     region: oregon
     rootDir: feedback-ui-react/feedback-ui-react
