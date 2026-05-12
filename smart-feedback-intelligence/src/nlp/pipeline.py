@@ -5,7 +5,6 @@ import spacy
 import numpy as np
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sentence_transformers import SentenceTransformer
 from typing import List, Optional
 import logging
 
@@ -35,7 +34,7 @@ class NLPPipeline:
         # Keep negations — important for sentiment
         self.stop_words -= {"no", "not", "never", "nor", "neither", "nobody", "nothing"}
         self.tfidf_vectorizer: Optional[TfidfVectorizer] = None
-        self.sentence_model: Optional[SentenceTransformer] = None
+        self.sentence_model = None  # Lazy loaded
 
         # Load spaCy for NER
         if use_spacy:
@@ -115,6 +114,7 @@ class NLPPipeline:
         """Generate Sentence-BERT embeddings."""
         if self.sentence_model is None:
             logger.info("Loading Sentence-BERT model...")
+            from sentence_transformers import SentenceTransformer  # lazy import
             self.sentence_model = SentenceTransformer("all-MiniLM-L6-v2")
         logger.info(f"Generating embeddings for {len(texts)} texts...")
         embeddings = self.sentence_model.encode(
