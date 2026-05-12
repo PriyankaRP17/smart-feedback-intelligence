@@ -46,7 +46,7 @@ store = ModelStore()
 
 
 def load_models():
-    """Load all trained models into memory at startup."""
+    """Load all trained models into memory — called lazily on first request."""
     logger.info("Loading models into memory...")
     try:
         store.pipeline = NLPPipeline()
@@ -72,9 +72,10 @@ def load_models():
         store.ready = False
 
 
+# ── Lazy load — don't load at startup to save memory ─────
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    load_models()
+    logger.info("App started — models will load on first request")
     yield
     logger.info("Shutting down...")
 
@@ -108,6 +109,10 @@ LABEL_MAPS = {
 # ── Inference helper ─────────────────────────────────────
 def run_inference(text: str) -> Dict:
     """Run all ML models on a single text."""
+    # Lazy load on first request
+    if not store.ready:
+        load_models()
+
     if not store.ready or store.tfidf is None:
         raise HTTPException(status_code=503, detail="Models not ready. Train first.")
 
@@ -119,7 +124,6 @@ def run_inference(text: str) -> Dict:
         if task in store.models:
             model = store.models[task]
             pred = int(model.predict(X)[0])
-            # Use label encoder if valid, else fall back to hardcoded map
             le = store.encoders.get(task)
             if le is not None and hasattr(le, "classes_"):
                 label = str(le.inverse_transform([pred])[0])
@@ -214,7 +218,6 @@ def batch_analyze(request: BatchRequest):
         result = analyze(single_req)
         results.append(result)
 
-    # Summary
     sentiments = [r.sentiment for r in results]
     categories = [r.category for r in results]
     urgencies = [r.urgency for r in results]
