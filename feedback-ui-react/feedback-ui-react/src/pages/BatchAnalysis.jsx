@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import axios from 'axios'
 
-const API = 'http://localhost:8000'
+const API = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 
 const SENTIMENT_COLOR = { negative: 'var(--neg)', positive: 'var(--pos)', neutral: 'var(--neu)' }
 const URGENCY_COLOR   = { high: 'var(--neg)', medium: 'var(--neu)', low: 'var(--pos)' }
