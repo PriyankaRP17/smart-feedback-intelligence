@@ -9,8 +9,7 @@ services:
     rootDir: smart-feedback-intelligence
 
     buildCommand: |
-      pip install --timeout 300 torch==2.3.1 --index-url https://download.pytorch.org/whl/cpu
-      pip install -r requirements.txt
+      pip install -r requirements-render.txt
       python -m spacy download en_core_web_sm
       python -c "import nltk; [nltk.download(r, quiet=True) for r in ['stopwords','wordnet','punkt','averaged_perceptron_tagger']]"
 
@@ -45,4 +44,4 @@ services:
       - key: NODE_VERSION
         value: "20"
       - key: VITE_API_URL
-        value: https://feedback-intelligence-api.onrender.com
+        value: https://feedback-intelligence-api-mgo4.onrender.com
