@@ -24,13 +24,6 @@ ENV/
 # Environment
 .env
 
-# ML Models (large files — use Git LFS or cloud storage)
-saved_models/
-*.pkl
-*.pt
-*.bin
-*.onnx
-
 # MLflow
 mlruns/
 
