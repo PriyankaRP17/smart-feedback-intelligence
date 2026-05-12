@@ -6,6 +6,7 @@ services:
     runtime: python
     plan: free
     region: oregon
+    rootDir: smart-feedback-intelligence
 
     buildCommand: |
       pip install --timeout 300 torch==2.3.1 --index-url https://download.pytorch.org/whl/cpu
@@ -14,7 +15,6 @@ services:
       python -c "import nltk; [nltk.download(r, quiet=True) for r in ['stopwords','wordnet','punkt','averaged_perceptron_tagger']]"
 
     startCommand: uvicorn api.main:app --host 0.0.0.0 --port $PORT
-
     healthCheckPath: /health
 
     envVars:
@@ -31,8 +31,6 @@ services:
   - type: web
     name: feedback-intelligence-ui
     runtime: static
-    plan: free
-    region: oregon
     rootDir: feedback-ui-react/feedback-ui-react
 
     buildCommand: npm install && npm run build
