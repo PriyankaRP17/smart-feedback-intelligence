@@ -28,13 +28,11 @@ services:
         value: "0.0.0.0"
 
   # ── 2. React Frontend (Static Site) ────────────────────
-  - type: web
+  - type: static
     name: feedback-intelligence-ui
-    runtime: node
     plan: free
     region: oregon
-
-    rootDir: smart-feedback-intelligence/frontend
+    rootDir: feedback-ui-react/feedback-ui-react
 
     buildCommand: npm install && npm run build
     staticPublishPath: ./dist
@@ -48,5 +46,4 @@ services:
       - key: NODE_VERSION
         value: "20"
       - key: VITE_API_URL
-        # Replace with your actual Render API URL after first deploy
         value: https://feedback-intelligence-api.onrender.com
