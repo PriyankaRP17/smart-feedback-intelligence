@@ -4,6 +4,18 @@
 
 ---
 
+## Live Demo
+
+| Service | URL |
+|---|---|
+| **Frontend** | https://feedback-intelligence-ui.onrender.com |
+| **API** | https://feedback-intelligence-api-mgo4.onrender.com |
+| **API Docs** | https://feedback-intelligence-api-mgo4.onrender.com/docs |
+
+> Hosted on Render free tier — first request may take ~30 seconds to wake up.
+
+---
+
 ## Project Structure
 
 ```
