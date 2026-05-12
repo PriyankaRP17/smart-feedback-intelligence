@@ -150,7 +150,7 @@ docker-compose up --build
 # MLflow    → http://localhost:5000
 ```
 
-> ⚠️ First build takes 15-20 mins — downloads all packages into the container.
+> First build takes 15-20 mins — downloads all packages into the container.
 > Subsequent runs use cache and start in seconds.
 
 ---
@@ -271,4 +271,4 @@ git push -u origin main
 ---
 
 ## Author
-Priyanka R P — [LinkedIn](https://linkedin.com) | [GitHub](https://github.com)
+Priyanka R P — [LinkedIn](https://www.linkedin.com/in/priyanka-rp/) | [GitHub](https://github.com/PriyankaRP17)
