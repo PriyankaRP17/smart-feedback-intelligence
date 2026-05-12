@@ -1,17 +1,14 @@
-# ── Render Deployment Config ──────────────────────────────
-# Docs: https://render.com/docs/yaml-spec
-# Deploy both API and frontend as separate Render services.
-
 services:
 
   # ── 1. FastAPI Backend ──────────────────────────────────
   - type: web
     name: feedback-intelligence-api
     runtime: python
-    plan: free                          # upgrade to starter for persistent disk
+    plan: free
     region: oregon
 
     buildCommand: |
+      pip install --timeout 300 torch==2.3.1 --index-url https://download.pytorch.org/whl/cpu
       pip install -r requirements.txt
       python -m spacy download en_core_web_sm
       python -c "import nltk; [nltk.download(r, quiet=True) for r in ['stopwords','wordnet','punkt','averaged_perceptron_tagger']]"
@@ -24,17 +21,11 @@ services:
       - key: PYTHON_VERSION
         value: "3.11"
       - key: SECRET_KEY
-        generateValue: true             # auto-generated secure key
+        generateValue: true
       - key: MLFLOW_TRACKING_URI
         value: /opt/render/project/src/mlruns
       - key: API_HOST
         value: "0.0.0.0"
-
-    # Persistent disk to store trained models between deploys
-    disk:
-      name: models-disk
-      mountPath: /opt/render/project/src/saved_models
-      sizeGB: 5
 
   # ── 2. React Frontend (Static Site) ────────────────────
   - type: web
@@ -43,12 +34,11 @@ services:
     plan: free
     region: oregon
 
-    rootDir: frontend
+    rootDir: smart-feedback-intelligence/frontend
 
-    buildCommand: npm ci && npm run build
+    buildCommand: npm install && npm run build
     staticPublishPath: ./dist
 
-    # SPA routing — serve index.html for all routes
     routes:
       - type: rewrite
         source: /*
@@ -58,5 +48,5 @@ services:
       - key: NODE_VERSION
         value: "20"
       - key: VITE_API_URL
-        # ⚠️ Replace with your actual Render API URL after first deploy
+        # Replace with your actual Render API URL after first deploy
         value: https://feedback-intelligence-api.onrender.com
